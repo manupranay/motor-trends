@@ -1,0 +1,43 @@
+library(datasets)
+data(mtcars)
+
+## Transform the class of some variables.
+
+mtcars$cyl <- factor(mtcars$cyl)
+mtcars$vs <- factor(mtcars$vs)
+mtcars$gear <- factor(mtcars$gear)
+mtcars$carb <- factor(mtcars$carb)
+mtcars$am <- factor(mtcars$am,labels=c('Automatic','Manual'))
+
+## Is an automatic or manual transmission better for MPG?
+## t-test to test the hypothesis
+
+t.test(mtcars$mpg~mtcars$am)
+
+## Based on the results, p-value = 0.001374<0.05, we reject the null hypothesis that there is no difference in MPG, and conclude that manual transmission is better than automatic transmission for MPG, with assumption that all other conditions remain unchanged.
+
+## Quantify the MPG difference between automatic and manual transmissions?
+
+## multivariate linear regression with all variables
+
+Multi = lm(data = mtcars, mpg~.)
+
+## We use the step function in R for a stepwise regression, where the choice of predictor is carried out automatically by comparing certain criterion, eg AIC.
+
+Best = step(Multi, direction = "both")
+
+summary(Best)
+
+#pairwise scatter plot between all variables
+pairs(mtcars)
+
+## boxplot of MPG by transmission types
+boxplot(mpg~am, data = mtcars,
+        xlab = "Transmission",
+        ylab = "Miles per Gallon",
+        main = "MPG by Transmission Type")
+        
+## Residual plots seems to be randomly scattered, and some transformation may be needed for linearity
+
+par(mfrow = c(2,2))
+plot(Best)
